@@ -1,14 +1,23 @@
 package com.ejemplo.usuarios.controller;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ejemplo.usuarios.dto.MessageResponse;
 import com.ejemplo.usuarios.dto.UpdateUserRequest;
 import com.ejemplo.usuarios.dto.UserResponse;
 import com.ejemplo.usuarios.service.UsuarioService;
-import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -27,9 +36,8 @@ public class UsuarioController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-        return usuarioService.obtenerPorId(id)
-                .<ResponseEntity<?>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(usuarioService.obtenerPorId(id)
+                .orElseThrow(NoSuchElementException::new));
     }
 
     @PutMapping("/{id}")
@@ -37,9 +45,8 @@ public class UsuarioController {
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest request) {
         try {
-            return usuarioService.actualizar(id, request)
-                    .<ResponseEntity<?>>map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.notFound().build());
+            return ResponseEntity.ok(usuarioService.actualizar(id, request)
+                    .orElseThrow(NoSuchElementException::new));
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(new MessageResponse(ex.getMessage()));
         }
@@ -48,7 +55,7 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> desactivar(@PathVariable Long id) {
         if (!usuarioService.desactivar(id)) {
-            return ResponseEntity.notFound().build();
+            throw new NoSuchElementException();
         }
 
         return ResponseEntity.ok(new MessageResponse("Usuario desactivado correctamente"));

@@ -55,11 +55,11 @@ Al registrar un usuario se almacena el hash generado por BCrypt. Durante el logi
 - Spring Web
 - Spring Data JPA
 - Bean Validation
-- Spring Security Crypto / BCrypt
+- Spring Security / BCrypt
 - H2 Database
 - Maven
 
-> Se utiliza únicamente el módulo criptográfico de Spring Security para BCrypt. No se configuró autenticación automática de Spring Security porque el objetivo de la práctica es implementar manualmente la lógica básica de registro y login.
+> BCrypt protege las contraseñas durante el registro y el login se valida con `PasswordEncoder.matches()`. La configuración web de Spring Security es stateless y permite `/api/v1/auth/**`. `/api/v1/users/**` queda público temporalmente hasta integrar autenticación real, como JWT; las demás rutas requieren autenticación. No se implementa JWT en esta práctica.
 
 ## Estructura de paquetes
 

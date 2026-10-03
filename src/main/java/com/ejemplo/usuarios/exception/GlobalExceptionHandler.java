@@ -2,9 +2,11 @@ package com.ejemplo.usuarios.exception;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +32,12 @@ public class GlobalExceptionHandler {
         respuesta.put("errores", errores);
 
         return ResponseEntity.badRequest().body(respuesta);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<MessageResponse> handleNotFound() {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new MessageResponse("Recurso no encontrado"));
     }
 
     @ExceptionHandler(Exception.class)
